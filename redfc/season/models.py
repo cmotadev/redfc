@@ -88,10 +88,23 @@ class Match(models.Model):
         unique_together = ("season", "schedule")
 
     def __str__(self):
+        return self.get_match_title()
+    
+    def get_absolute_url(self):
+        # TODO: change to definitive URL
+        # from django.urls import reverse
+        # return reverse("match-detail", kwargs={"pk": self.pk})
+                       
+        return "/seasons/%i/matches/%i" % (self.season.id, self.id)
+    
+    def get_match_title(self):
         contestants = (self.season.team.name, self.contestant)
         if self.home_or_away == self.MatchLocation.AWAY:
             contestants = reversed(contestants)
         return "{} x {}".format(*contestants)
+    
+    def get_match_description(self):
+        return "OK"
 
 
 class MatchResult(models.Model):
