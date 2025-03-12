@@ -8,9 +8,11 @@ django-allauth==65.3.1
 django-ical==1.9.2
 django-recaptcha==4.0.0
 django-recurrence==1.11.1
+gunicorn==23.0.0
 icalendar==6.1.1
 idna==3.10
 oauthlib==3.2.2
+packaging==24.2
 pycparser==2.22
 PyJWT==2.10.1
 python-dateutil==2.9.0.post0
@@ -20,3 +22,4 @@ six==1.17.0
 sqlparse==0.5.3
 tzdata==2025.1
 urllib3==2.3.0
+whitenoise==6.9.0
