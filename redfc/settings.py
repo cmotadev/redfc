@@ -9,8 +9,12 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import dj_database_url
 
+from decouple import config, Csv, Choices
 from pathlib import Path
+
+DEPLOY_TYPE=config("DEPLOY_TYPE", default="default", cast=Choices(['default', 'heroku']))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_ly$(%dz=ug&*z4xgnj^#ncb!s@mpaek-^g0y8)qme*fu74o)5'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-# TODO: Temporario
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -87,13 +90,23 @@ WSGI_APPLICATION = 'redfc.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+DJ_DATABASE_ARGS = {
+    'env': 'DATABASE_URL',
+    'default': 'sqlite:///%s' % (BASE_DIR / 'db.sqlite3')
+}
+
+if DEPLOY_TYPE == 'heroku':
+    DJ_DATABASE_ARGS.update({
+        'conn_max_age': 600,
+        'conn_health_checks': True,
+        'ssl_require': True,
+    })
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(**DJ_DATABASE_ARGS),
 }
+
+del DJ_DATABASE_ARGS
 
 
 # Password validation
